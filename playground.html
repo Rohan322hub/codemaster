@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeMaster - Playground</title>
+<style>
+    body {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        background: #0b1220;
+        color: #e8eefb;
+        font-family: 'Fira Code', monospace;
+    }
+
+    /* Original header style restored */
+    header {
+        background-color: #0f1a2b;
+        padding: 15px 20px;
+        text-align: center;
+        color: #e8eefb;
+    }
+    header h1 { margin: 0; font-size: 28px; color: #5cc8ff; }
+    nav { margin-top: 10px; }
+    nav a {
+        color: #5cc8ff;
+        text-decoration: none;
+        margin: 0 12px;
+        font-weight: bold;
+        transition: color 0.3s;
+    }
+    nav a:hover { color: #61ffa8; }
+
+    .playground { flex: 1; padding: 20px; text-align: center; }
+    .editor-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+    .editor { display: flex; flex-direction: column; width: 320px; }
+    textarea {
+        background: #1e1e2f;
+        color: #f8f8f2;
+        border: 1px solid #5cc8ff;
+        border-radius: 8px;
+        padding: 10px;
+        min-height: 150px;
+        font-family: 'Fira Code', monospace;
+        font-size: 14px;
+        resize: vertical;
+    }
+    .button-container { margin-bottom: 20px; }
+    .btn {
+        background: #5cc8ff;
+        color: #0b1220;
+        border: none;
+        padding: 12px 20px;
+        margin: 5px;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.2s ease;
+    }
+    .btn:hover { background: #61ffa8; transform: scale(1.05); }
+
+    iframe {
+        width: 100%;
+        height: 350px;
+        background: #1e1e2f;
+        border: 1px solid #5cc8ff;
+        border-radius: 8px;
+        font-family: 'Fira Code', monospace;
+        padding: 10px;
+        overflow: auto;
+    }
+
+    #errorContainer {
+        color: #ff4d4d;
+        font-family: monospace;
+        margin-top: 10px;
+        min-height: 40px;
+        text-align: left;
+        white-space: pre-wrap;
+    }
+
+    footer { background: #0f1a2b; text-align: center; padding: 10px; margin-top: auto; }
+</style>
+</head>
+<body>
+<header>
+    <h1>CodeMaster</h1>
+    <nav>
+        <a href="courses.html">Courses</a>
+        <a href="about.html">About</a>
+        <a href="playground.html">Playground</a>
+        <a href="contact.html">Contact</a>
+    </nav>
+</header>
+
+<section class="playground">
+<h2>Live Coding Playground</h2>
+
+<div class="editor-container">
+    <div class="editor">
+        <label for="htmlCode">HTML</label>
+        <textarea id="htmlCode" placeholder="Write your HTML code here"></textarea>
+    </div>
+    <div class="editor">
+        <label for="cssCode">CSS</label>
+        <textarea id="cssCode" placeholder="Write your CSS code here"></textarea>
+    </div>
+    <div class="editor">
+        <label for="jsCode">JavaScript</label>
+        <textarea id="jsCode" placeholder="Write your JS code here"></textarea>
+    </div>
+</div>
+
+<div class="button-container">
+    <button class="btn" onclick="runAll()">Run Code</button>
+    <button class="btn" onclick="resetCode()">Reset All</button>
+</div>
+
+<iframe id="output"></iframe>
+<div id="errorContainer"></div>
+</section>
+
+<footer>
+<p>&copy; 2025 CodeMaster. All rights reserved.</p>
+</footer>
+
+<script>
+function runAll() {
+    const html = document.getElementById('htmlCode').value;
+    const css = document.getElementById('cssCode').value;
+    const js = document.getElementById('jsCode').value;
+    const outputFrame = document.getElementById('output');
+    const errorContainer = document.getElementById('errorContainer');
+    errorContainer.innerText = "";
+
+    // HTML validation
+    try {
+        const parser = new DOMParser();
+        const parsedHTML = parser.parseFromString(html, 'text/html');
+        const parseError = parsedHTML.querySelector('parsererror');
+        if (parseError) throw new Error(parseError.textContent);
+    } catch(e) {
+        errorContainer.innerText = "HTML Error: " + e.message;
+        outputFrame.src = '';
+        return;
+    }
+
+    // CSS validation
+    try {
+        const sheet = new CSSStyleSheet();
+        sheet.replaceSync(css);
+    } catch(e) {
+        errorContainer.innerText = "CSS Error: " + e.message;
+        outputFrame.src = '';
+        return;
+    }
+
+    // JS validation
+    try {
+        new Function(js);
+    } catch(e) {
+        errorContainer.innerText = "JavaScript Syntax Error: " + e.message;
+        outputFrame.src = '';
+        return;
+    }
+
+    // All valid, build output
+    const fullCode = `
+    <html>
+    <head>
+        <style>
+            body { background: #1e1e2f; color: #f8f8f2; font-family: 'Fira Code', monospace; padding: 10px; }
+            button { background-color:#5cc8ff; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; color:#0b1220; font-weight:bold; }
+            button:hover { background-color:#61ffa8; }
+            ${css}
+        </style>
+    </head>
+    <body>
+        ${html}
+        <script>
+            try {
+                ${js}
+            } catch(e) {
+                parent.document.getElementById('errorContainer').innerText += "JavaScript Runtime Error: " + e.message + "\\n";
+            }
+        <\/script>
+    </body>
+    </html>
+    `;
+    const blob = new Blob([fullCode], { type: 'text/html' });
+    outputFrame.src = URL.createObjectURL(blob);
+}
+
+function resetCode() {
+    document.getElementById('htmlCode').value = '';
+    document.getElementById('cssCode').value = '';
+    document.getElementById('jsCode').value = '';
+    document.getElementById('output').src = '';
+    document.getElementById('errorContainer').innerText = '';
+}
+</script>
+
+</body>
+</html>

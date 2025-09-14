@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Course Enrollment</title>
+  <style>
+    body {
+      background: #0b1220;
+      color: #e8eefb;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      text-align: center;
+    }
+    form {
+      background: #0f1a2b;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0px 0px 15px rgba(255,255,255,0.1);
+      width: 300px;
+    }
+    input, button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    button {
+      background: #5cc8ff;
+      color: #0b1220;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+    button:hover {
+      background: #61ffa8;
+    }
+    h1 {
+      margin-bottom: 10px;
+      color: #61ffa8;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Course Enrollment</h1>
+  <form id="enrollForm">
+    <input type="hidden" id="courseName" name="course">
+    <input type="text" id="studentName" placeholder="Enter your name" required>
+    <input type="email" id="studentEmail" placeholder="Enter your email" required>
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    // ✅ Get course name from URL
+    const params = new URLSearchParams(window.location.search);
+    const course = params.get("course");
+    document.getElementById("courseName").value = course ? course : "Unknown Course";
+
+    // ✅ Form submission logic
+    document.getElementById("enrollForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById("studentName").value.trim();
+      const email = document.getElementById("studentEmail").value.trim();
+
+      if (!name || !email) {
+        alert("Please fill in all fields before submitting.");
+        return;
+      }
+
+      alert(`✅ ${name}, you have successfully enrolled for ${course}!`);
+
+      // ✅ Redirect to beginner course page
+      let beginnerPage = "";
+      switch (course) {
+        case "HTML & CSS":
+          beginnerPage = "beginner-html-css.html";
+          break;
+        case "JavaScript":
+          beginnerPage = "beginner-javascript.html";
+          break;
+        case "Python":
+          beginnerPage = "beginner-python.html";
+          break;
+        case "React JS":
+          beginnerPage = "beginner-react.html";
+          break;
+        default:
+          beginnerPage = "course.html"; // fallback
+      }
+
+      window.location.href = beginnerPage;
+    });
+  </script>
+
+</body>
+</html>

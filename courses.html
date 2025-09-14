@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeMaster - Courses</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* ✅ Make page fill entire screen */
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: #0b1220;
+            color: #e8eefb;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            padding: 10px 20px;
+            background: #0f1a2b;
+            text-align: center;
+        }
+
+        nav a {
+            color: #5cc8ff;
+            margin: 0 10px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: #61ffa8;
+        }
+
+        .courses {
+            flex: 1; /* ✅ Pushes footer to bottom */
+            padding: 20px;
+            text-align: center;
+        }
+
+        .course-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .course-card {
+            background: #0f1a2b;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0px 0px 10px rgba(255,255,255,0.1);
+        }
+
+        .course-card button {
+            background: #5cc8ff;
+            color: #0b1220;
+            border: none;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .course-card button:hover {
+            background: #61ffa8;
+            transform: scale(1.05);
+        }
+
+        footer {
+            background: #0f1a2b;
+            text-align: center;
+            padding: 10px;
+            margin-top: auto; /* ✅ Keeps footer at bottom */
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>CodeMaster</h1>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="playground.html">Playground</a>
+        <a href="contact.html">Contact</a>
+    </nav>
+</header>
+
+<section class="courses">
+    <h2>Popular Courses</h2>
+    <div class="course-cards">
+        <div class="course-card">
+            <h3>HTML & CSS</h3>
+            <p>Learn the basics of web development and build stunning websites.</p>
+            <button>Enroll Now</button>
+        </div>
+        <div class="course-card">
+            <h3>JavaScript</h3>
+            <p>Master JavaScript and make interactive web pages and apps.</p>
+            <button>Enroll Now</button>
+        </div>
+        <div class="course-card">
+            <h3>Python</h3>
+            <p>Learn Python programming for web development, AI, and data analysis.</p>
+            <button>Enroll Now</button>
+        </div>
+        <div class="course-card">
+            <h3>React JS</h3>
+            <p>Build modern and dynamic web applications using React JS.</p>
+            <button>Enroll Now</button>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>&copy; 2025 CodeMaster. All rights reserved.</p>
+</footer>
+
+<!-- 🔥 Script for Button Actions -->
+<script>
+document.querySelectorAll('.course-card button').forEach((button) => {
+    button.addEventListener('click', function () {
+        const courseName = this.parentElement.querySelector('h3').innerText;
+        window.location.href = `enroll.html?course=${encodeURIComponent(courseName)}`;
+    });
+});
+</script>
+
+</body>
+</html>
